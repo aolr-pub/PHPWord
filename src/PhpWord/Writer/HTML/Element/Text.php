@@ -68,17 +68,13 @@ class Text extends AbstractElement
     {
         /** @var \PhpOffice\PhpWord\Element\Text $element Type hint */
         $element = $this->element;
-        $this->getFontStyle();
+//        $this->getFontStyle();
 
         $content = '';
         $content .= $this->writeOpening();
         $content .= $this->openingText;
         $content .= $this->openingTags;
-        if (Settings::isOutputEscapingEnabled()) {
-            $content .= $this->escaper->escapeHtml($element->getText());
-        } else {
-            $content .= $element->getText();
-        }
+        $content .= $this->processTextWithFont();
         $content .= $this->closingTags;
         $content .= $this->closingText;
         $content .= $this->writeClosing();
@@ -117,9 +113,10 @@ class Text extends AbstractElement
         if (!$this->withoutP) {
             $style = '';
             if (method_exists($this->element, 'getParagraphStyle')) {
-                $style = $this->getParagraphStyle();
+//                $style = $this->getParagraphStyle();
+                $class = $this->getParagraphClass();
             }
-            $content .= "<p{$style}>";
+            $content .= "<p{$style}{$class}>";
         }
 
         //open track change tag
@@ -238,6 +235,55 @@ class Text extends AbstractElement
         }
 
         return $style;
+    }
+
+    public function getParagraphClass()
+    {
+        $element = $this->element;
+        $paragraphStyle = $element->getParagraphStyle();
+        $pStyleIsObject = ($paragraphStyle instanceof Paragraph);
+        $classes = [];
+        if ($pStyleIsObject && !empty($paragraphStyle->getStyleName())) {
+            $classes[] = $paragraphStyle->getStyleName();
+        }
+
+        if (!empty($this->additionalClass)) {
+            $classes[] = $this->additionalClass;
+        }
+        return ' class="' . implode(' ', $classes) . '"';
+    }
+
+    private function processTextWithFont()
+    {
+        $text = '';
+        if (Settings::isOutputEscapingEnabled()) {
+            $text = $this->escaper->escapeHtml($this->element->getText());
+        } else {
+            $text = $this->element->getText();
+        }
+
+        $fontStyle = $this->element->getfontStyle();
+        if (!$fontStyle instanceof Font) {
+            return $text;
+        }
+
+        if ($fontStyle->isItalic()) {
+            $text = sprintf("<i>%s</i>", $text);
+        }
+
+        if ($fontStyle->isBold()) {
+            $text = sprintf("<b>%s</b>", $text);
+        }
+
+        if ($fontStyle->isSuperScript()) {
+            $text = sprintf("<sup>%s</sup>", $text);
+        }
+
+        if ($fontStyle->isSubScript()) {
+            $text = sprintf("<sub>%s</sub>", $text);
+        }
+
+        return $text;
     }
 
     /**
