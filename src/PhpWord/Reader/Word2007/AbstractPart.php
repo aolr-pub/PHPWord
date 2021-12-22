@@ -663,6 +663,8 @@ abstract class AbstractPart
                 $styleValue = $this->readStyleDef($method, $attributeValue, $expected);
                 if ($styleValue !== null) {
                     $styles[$styleProp] = $styleValue;
+                } else if ($styleProp == 'vMerge') {
+                    $styles[$styleProp] = 'continue';
                 }
             }
         }
