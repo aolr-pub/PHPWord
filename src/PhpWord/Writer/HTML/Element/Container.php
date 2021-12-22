@@ -45,11 +45,14 @@ class Container extends AbstractElement
             return '';
         }
         $containerClass = substr(get_class($container), strrpos(get_class($container), '\\') + 1);
-        $withoutP = in_array($containerClass, array('TextRun', 'Footnote', 'Endnote')) ? true : false;
+        $withoutP = in_array($containerClass, array('TextRun', 'Footnote', 'Endnote', 'ListItemRun')) ? true : false;
         $content = '';
 
         $elements = $container->getElements();
-        foreach ($elements as $element) {
+        foreach ($elements as $index => $element) {
+//            if ($index == 26 || $index == 84) {
+//                dump($element);
+//            }
             $elementClass = get_class($element);
             $writerClass = str_replace('PhpOffice\\PhpWord\\Element', $this->namespace, $elementClass);
             if (class_exists($writerClass)) {
@@ -58,6 +61,7 @@ class Container extends AbstractElement
                 $content .= $writer->write();
             }
         }
+
 
         return $content;
     }

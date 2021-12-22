@@ -31,12 +31,13 @@ class TextBreak extends AbstractElement
      */
     public function write()
     {
-        if ($this->withoutP) {
-            $content = '<br />' . PHP_EOL;
-        } else {
-            $content = '<p>&nbsp;</p>' . PHP_EOL;
-        }
-
-        return $content;
+        return null;
+//        if ($this->withoutP) {
+//            $content = '<br />' . PHP_EOL;
+//        } else {
+//            $content = '<p>&nbsp;</p>' . PHP_EOL;
+//        }
+//
+//        return $content;
     }
 }

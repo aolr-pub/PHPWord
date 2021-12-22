@@ -32,6 +32,12 @@ use PhpOffice\PhpWord\Writer\HTML\Style\Paragraph as ParagraphStyleWriter;
 class Text extends AbstractElement
 {
     /**
+     * for list item
+     * @var string
+     */
+    protected $additionalClass = '';
+
+    /**
      * Text written after opening
      *
      * @var string
@@ -116,7 +122,9 @@ class Text extends AbstractElement
 //                $style = $this->getParagraphStyle();
                 $class = $this->getParagraphClass();
             }
-            $content .= "<p{$style}{$class}>";
+
+            $id = ' id="' . $this->element->getElementIndex() . '"';
+            $content .= "<p{$id}{$style}{$class}>";
         }
 
         //open track change tag

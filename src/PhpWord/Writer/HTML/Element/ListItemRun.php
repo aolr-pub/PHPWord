@@ -17,6 +17,8 @@
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
 
+use PhpOffice\PhpWord\Style\ListItem;
+
 /**
  * ListItem element HTML writer
  *
@@ -35,9 +37,17 @@ class ListItemRun extends TextRun
             return '';
         }
 
-        $writer = new Container($this->parentWriter, $this->element);
-        $content = $writer->write() . PHP_EOL;
+        $this->setAdditionalClass();
+        return parent::write();
+    }
 
-        return $content;
+    private function setAdditionalClass()
+    {
+        if (method_exists($this->element, 'getStyle')) {
+            $style = $this->element->getStyle();
+            if ($style instanceof ListItem) {
+                $this->additionalClass = $style->getNumStyle();
+            }
+        }
     }
 }
