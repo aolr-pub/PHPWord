@@ -123,8 +123,8 @@ class Text extends AbstractElement
                 $class = $this->getParagraphClass();
             }
 
-            $id = ' id="' . $this->element->getElementIndex() . '"';
-            $content .= "<p{$id}{$style}{$class}>";
+            $index = ' data-index="' . $this->element->getElementIndex() . '"';
+            $content .= "<p{$index}{$style}{$class}>";
         }
 
         //open track change tag
