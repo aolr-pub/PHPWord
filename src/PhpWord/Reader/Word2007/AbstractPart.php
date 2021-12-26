@@ -124,17 +124,19 @@ abstract class AbstractPart
                     $fldCharType = $xmlReader->getAttribute('w:fldCharType', $node, 'w:fldChar');
                     if ('begin' == $fldCharType) {
                         $ignoreText = true;
-                    } elseif ('end' == $fldCharType) {
+                    } elseif (in_array($fldCharType, ['separate', 'end'])) {
                         $ignoreText = false;
                     }
                 }
                 if (!is_null($instrText)) {
-                    $textContent .= '{' . $instrText . '}';
+                    // get pure doc
+//                    $textContent .= "{" . $instrText . "}";
                 } else {
                     if (false === $ignoreText) {
                         $textContent .= $xmlReader->getValue('w:t', $node);
                     }
                 }
+
             }
             $parent->addPreserveText(htmlspecialchars($textContent, ENT_QUOTES, 'UTF-8'), $fontStyle, $paragraphStyle);
         } elseif ($xmlReader->elementExists('w:pPr/w:numPr', $domNode)) {

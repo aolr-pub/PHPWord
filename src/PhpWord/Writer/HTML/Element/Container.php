@@ -50,8 +50,9 @@ class Container extends AbstractElement
 
         $elements = $container->getElements();
         foreach ($elements as $index => $element) {
-//            if ($index == 26 || $index == 84) {
+//            if (!$element instanceof \PhpOffice\PhpWord\Element\Text && $index == 16) {
 //                dump($element);
+//                exit;
 //            }
             $elementClass = get_class($element);
             $writerClass = str_replace('PhpOffice\\PhpWord\\Element', $this->namespace, $elementClass);
