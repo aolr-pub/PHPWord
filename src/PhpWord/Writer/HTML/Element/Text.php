@@ -118,13 +118,16 @@ class Text extends AbstractElement
         $content = '';
         if (!$this->withoutP) {
             $style = '';
+            $class = '';
+            $attr = '';
             if (method_exists($this->element, 'getParagraphStyle')) {
 //                $style = $this->getParagraphStyle();
                 $class = $this->getParagraphClass();
+                $attr = $this->getParagraphAttributes();
             }
 
             $index = ' data-index="' . $this->element->getElementIndex() . '"';
-            $content .= "<p{$index}{$style}{$class}>";
+            $content .= "<p{$index}{$style}{$class}{$attr}>";
         }
 
         //open track change tag
@@ -259,6 +262,23 @@ class Text extends AbstractElement
             $classes[] = $this->additionalClass;
         }
         return ' class="' . implode(' ', $classes) . '"';
+    }
+
+    private function getParagraphAttributes()
+    {
+        $element = $this->element;
+        $paragraphStyle = $element->getParagraphStyle();
+        $pStyleIsObject = ($paragraphStyle instanceof Paragraph);
+        $attrs = [];
+        if ($pStyleIsObject && !empty($paragraphStyle->getAlignment())) {
+            $attrs['algin'] = $paragraphStyle->getAlignment();
+        }
+
+        $attrString = '';
+        foreach ($attrs as $k => $v) {
+            $attrString .= $k . '="' . $v . '"';
+        }
+        return empty($attrString) ? '' : ' ' . $attrString;
     }
 
     private function processTextWithFont()
