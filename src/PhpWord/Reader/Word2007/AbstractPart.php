@@ -581,7 +581,25 @@ abstract class AbstractPart
             'bgColor'       => array(self::READ_VALUE, 'w:shd', 'w:fill'),
         );
 
-        return $this->readStyleDefs($xmlReader, $domNode, $styleDefs);
+        $customStyles = $this->readStyleDefs($xmlReader, $domNode, $styleDefs);
+        $bordersNode = $xmlReader->getElement('w:tcBorders', $domNode);
+        $borderStyles = [];
+        if (!empty($bordersNode)) {
+            $borderDefs = [
+                'borderTopSize' => [self::READ_VALUE, 'w:top'],
+                'borderTopColor' => [self::READ_VALUE, 'w:top', 'w:color'],
+                'borderRightSize' => [self::READ_VALUE, 'w:right'],
+                'borderLeftColor' => [self::READ_VALUE, 'w:right', 'w:color'],
+                'borderBottomSize' => [self::READ_VALUE, 'w:bottom'],
+                'borderBottomColor' => [self::READ_VALUE, 'w:bottom', 'w:color'],
+                'borderLeftSize' => [self::READ_VALUE, 'w:left'],
+                'borderLeftColor' => [self::READ_VALUE, 'w:left', 'w:color'],
+            ];
+
+            $borderStyles = $this->readStyleDefs($xmlReader, $bordersNode, $borderDefs);
+        }
+
+        return array_merge($customStyles, $borderStyles);
     }
 
     /**

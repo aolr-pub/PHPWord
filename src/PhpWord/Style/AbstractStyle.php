@@ -226,6 +226,9 @@ abstract class AbstractStyle
      */
     protected function setNumericVal($value, $default = null)
     {
+        if ($value == 'single') {
+            $value = 1;
+        }
         if (!is_numeric($value)) {
             $value = $default;
         }
