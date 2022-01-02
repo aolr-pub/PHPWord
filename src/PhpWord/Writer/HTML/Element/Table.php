@@ -51,6 +51,7 @@ class Table extends AbstractElement
                 $rowCellCount = count($rowCells);
                 for ($j = 0; $j < $rowCellCount; $j++) {
                     $cellStyle = $rowCells[$j]->getStyle();
+                    $styleAttr = $this->getCellStyle($cellStyle);
                     $cellBgColor = $cellStyle->getBgColor();
                     $cellBgColor === 'auto' && $cellBgColor = null; // auto cannot be parsed to hexadecimal number
                     $cellFgColor = null;
@@ -85,7 +86,7 @@ class Table extends AbstractElement
                         $cellRowSpanAttr = ($cellRowSpan > 1 ? " rowspan=\"{$cellRowSpan}\"" : '');
                         $cellBgColorAttr = (is_null($cellBgColor) ? '' : " bgcolor=\"#{$cellBgColor}\"");
                         $cellFgColorAttr = (is_null($cellFgColor) ? '' : " color=\"#{$cellFgColor}\"");
-                        $content .= "<{$cellTag}{$cellColSpanAttr}{$cellRowSpanAttr}{$cellBgColorAttr}{$cellFgColorAttr}>" . PHP_EOL;
+                        $content .= "<{$cellTag}{$cellColSpanAttr}{$cellRowSpanAttr}{$cellBgColorAttr}{$cellFgColorAttr}{$styleAttr}>" . PHP_EOL;
                         $writer = new Container($this->parentWriter, $rowCells[$j]);
                         $content .= $writer->write();
                         if ($cellRowSpan > 1) {
@@ -137,6 +138,26 @@ class Table extends AbstractElement
             }
         }
 
+        return $style . '"';
+    }
+
+    private function getCellStyle($cellStyle = null)
+    {
+        if ($cellStyle == null) {
+            return '';
+        }
+
+        if (is_string($cellStyle)) {
+            $style = ' class="' . $cellStyle;
+        } else {
+            $style = ' style="';
+
+            $borderSizes = $cellStyle->getBorderSize();
+            $style .= 'border-top:' . (empty($borderSizes[0]) ? 'none' : 'solid windowtext ' . $borderSizes[0] . 'pt') . ';';
+            $style .= 'border-right:' . (empty($borderSizes[1]) ? 'none' : 'solid windowtext ' . $borderSizes[1] . 'pt') . ';';
+            $style .= 'border-bottom:' . (empty($borderSizes[2]) ? 'none' : 'solid windowtext ' . $borderSizes[2] . 'pt') . ';';
+            $style .= 'border-left:' . (empty($borderSizes[3]) ? 'none' : 'solid windowtext ' . $borderSizes[3] . 'pt') . ';';
+        }
         return $style . '"';
     }
 }
