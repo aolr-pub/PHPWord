@@ -38,7 +38,7 @@ class Image extends Text
             return '';
         }
         $content = '';
-        $imageData = $this->element->getImageStringData(true);
+        $imageData = ''; //$this->element->getImageStringData(true);
         if ($imageData !== null) {
             $styleWriter = new ImageStyleWriter($this->element->getStyle());
             $style = $styleWriter->write();
