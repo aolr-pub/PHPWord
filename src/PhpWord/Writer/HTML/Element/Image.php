@@ -45,7 +45,13 @@ class Image extends Text
             $imageData = 'data:' . $this->element->getImageType() . ';base64,' . $imageData;
 
             $content .= $this->writeOpening();
-            $content .= "<img data-name=\"{$this->element->getTarget()}\" border=\"0\" style=\"{$style}\" src=\"{$imageData}\"/>";
+
+            $name = $this->element->getTarget();
+            $type = $this->element->getImageType();
+            if (preg_match('/[^.]+\.$/', $name)) {
+                $name = $name . str_replace('img/', '', $type);
+            }
+            $content .= "<img data-name=\"{$name}\" border=\"0\" style=\"{$style}\" src=\"{$imageData}\"/>";
             $content .= $this->writeClosing();
         }
 

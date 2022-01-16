@@ -414,8 +414,12 @@ class Image extends AbstractElement
         } else {
             $imageData = @getimagesize($this->source);
         }
+//        dump($imageData, $this->sourceType, $this->source);exit;
         if (!is_array($imageData)) {
-            throw new InvalidImageException(sprintf('Invalid image: %s', $this->source));
+            $imageData = [
+                0 => 0, 1 => 0, 2 => 0, 3=> 'width="0" height="0"', 'bits' => 8, 'mime' => "img/" . pathinfo($this->source, PATHINFO_EXTENSION)
+            ];
+//            throw new InvalidImageException(sprintf('Invalid image: %s', $this->source));
         }
         list($actualWidth, $actualHeight, $imageType) = $imageData;
 
@@ -425,13 +429,19 @@ class Image extends AbstractElement
             $supportedTypes = array_merge($supportedTypes, array(IMAGETYPE_BMP, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM));
         }
         if (!in_array($imageType, $supportedTypes)) {
-            throw new UnsupportedImageTypeException();
+            // Define image functions
+            $this->imageType = $imageData['mime'];
+//            $this->setFunctions();
+//            $this->setProportionalSize($actualWidth, $actualHeight);
+
+//            throw new UnsupportedImageTypeException();
+        } else {
+            // Define image functions
+            $this->imageType = image_type_to_mime_type($imageType);
+            $this->setFunctions();
+            $this->setProportionalSize($actualWidth, $actualHeight);
         }
 
-        // Define image functions
-        $this->imageType = image_type_to_mime_type($imageType);
-        $this->setFunctions();
-        $this->setProportionalSize($actualWidth, $actualHeight);
     }
 
     /**
@@ -484,6 +494,7 @@ class Image extends AbstractElement
         if (false === $tempFilename) {
             throw new CreateTemporaryFileException(); // @codeCoverageIgnore
         }
+
 
         $zip = new ZipArchive();
         if ($zip->open($zipFilename) !== false) {
